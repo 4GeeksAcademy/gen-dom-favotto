@@ -1,8 +1,12 @@
-import "bootstrap";
-import "./style.css";
+const pronouns = ["the", "my"];
+const adjectives = ["great", "small", "funny"];
+const nouns = ["computer", "dog", "camion", "toma", "computado"];
 
-import "./assets/img/rigo-baby.jpg";
-import "./assets/img/4geeks.ico";
+const extensionsMap = {
+  camion: ".es",
+  toma: ".te",
+  computado: ".ra"
+};
 
 function generateDomainNames(pronouns, adjectives, nouns, extensionsMap) {
   return pronouns.reduce(
@@ -10,7 +14,7 @@ function generateDomainNames(pronouns, adjectives, nouns, extensionsMap) {
       domains.concat(
         adjectives.flatMap(adjective =>
           nouns.flatMap(noun => {
-            const extension = extensionsMap[noun] || ".com"; // Valor por defecto si no encuentra una extensión
+            const extension = extensionsMap[noun] || ".com";
             return [pronoun + adjective + noun + extension];
           })
         )
@@ -19,18 +23,10 @@ function generateDomainNames(pronouns, adjectives, nouns, extensionsMap) {
   );
 }
 
-window.onload = function() {
-  const pronouns = ["the", "my"];
-  const adjectives = ["great", "small", "funny"];
-  const nouns = ["computer", "dog", "camion", "toma", "computado"];
+const generateButton = document.getElementById("generateButton");
+const domainContainer = document.getElementById("domainContainer");
 
-  // Mapeamos cada sustantivo a su extensión correspondiente
-  const extensionsMap = {
-    camion: ".es",
-    toma: ".te",
-    computado: ".ra"
-  };
-
+generateButton.addEventListener("click", () => {
   const generatedDomains = generateDomainNames(
     pronouns,
     adjectives,
@@ -38,7 +34,19 @@ window.onload = function() {
     extensionsMap
   );
 
-  for (const domain of generatedDomains) {
-    console.log(domain);
+  if (generatedDomains.length === 0) {
+    domainContainer.textContent = "No se pudieron generar dominios.";
+    return;
   }
-};
+
+  domainContainer.innerHTML = "";
+
+  const domainList = document.createElement("ul");
+  generatedDomains.forEach(domain => {
+    const listItem = document.createElement("li");
+    listItem.textContent = domain;
+    domainList.appendChild(listItem);
+  });
+
+  domainContainer.appendChild(domainList);
+});
