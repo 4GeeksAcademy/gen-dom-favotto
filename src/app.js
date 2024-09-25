@@ -1,28 +1,52 @@
-Dominio respaldo codigo
-/* eslint-disable */
-import "bootstrap";
-import "./style.css";
+const pronouns = ["the", "my"];
+const adjectives = ["great", "small", "funny"];
+const nouns = ["computer", "dog", "camion", "toma", "computado"];
 
-import "./assets/img/rigo-baby.jpg";
-import "./assets/img/4geeks.ico";
+const extensionsMap = {
+  camion: ".es",
+  toma: ".te",
+  computado: ".ra"
+};
 
-window.onload = function() {
-  let pronoun = ["the", "my"];
-  let adjective = ["great", "small", "funny"];
-  let noun = ["computer", "dog"];
-  let extension = [".com", ".net", ".es"];
-
-  let domains = [];
-
-  for (let i = 0; i < pronoun.length; i++) {
-    for (let j = 0; j < adjective.length; j++) {
-      for (let k = 0; k < noun.length; k++) {
-        for (let l = 0; l < extension.length; l++) {
-          let domainGenerator =
-            pronoun[i] + adjective[j] + noun[k] + extension[l];
-          console.log(domainGenerator);
-        }
-      }
-    }
-  }
+function generateDomainNames(pronouns, adjectives, nouns, extensionsMap) {
+  return pronouns.reduce(
+    (domains, pronoun) =>
+      domains.concat(
+        adjectives.flatMap(adjective =>
+          nouns.flatMap(noun => {
+            const extension = extensionsMap[noun] || ".com";
+            return [pronoun + adjective + noun + extension];
+          })
+        )
+      ),
+    []
+  );
 }
+
+const generateButton = document.getElementById("generateButton");
+const domainContainer = document.getElementById("domainContainer");
+
+generateButton.addEventListener("click", () => {
+  const generatedDomains = generateDomainNames(
+    pronouns,
+    adjectives,
+    nouns,
+    extensionsMap
+  );
+
+  if (generatedDomains.length === 0) {
+    domainContainer.textContent = "No se pudieron generar dominios.";
+    return;
+  }
+
+  domainContainer.innerHTML = "";
+
+  const domainList = document.createElement("ul");
+  generatedDomains.forEach(domain => {
+    const listItem = document.createElement("li");
+    listItem.textContent = domain;
+    domainList.appendChild(listItem);
+  });
+
+  domainContainer.appendChild(domainList);
+});
